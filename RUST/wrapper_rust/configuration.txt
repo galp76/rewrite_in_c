@@ -1,0 +1,3 @@
+# set to "true" to enable backup, any other value disables backup, this value CAN NOT BE EMPTY, 
+# otherwise the program will crash, when the function APPEND_TO_FILE is called.
+session_backup=true

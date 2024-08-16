@@ -1,0 +1,14 @@
+Suma.;./bin/sum
+Resta.;./bin/subtraction
+Multiplicación.;./bin/multiplication
+División.;./bin/division
+Factores primos.;./bin/prime_factors
+Mínimo Común Múltiplo.;./bin/lcm
+Máximo Común Divisor.;./bin/gcd
+Operaciones combinadas con números enteros (suma, resta, multiplicación y división).;./bin/calculator
+Fracciones: sumas y restas con distinto denominador (explicación paso a paso).;./bin/fractions
+Suma con decimales.;./bin/sum_decimals
+Resta con decimales.;./bin/subtraction_decimals
+Multiplicación con decimales.;./bin/multiplication_decimals
+División con decimales.;./bin/division_decimals
+Análisis de problemas.;./bin/fitlg
