@@ -173,6 +173,7 @@ size_t get_user_option(FILE *session_pointer, bool session_backup, size_t min, s
 	int option = 0;
 	while (1) {
 		int counter = fscanf(stdin, "%d", &option);
+		fprintf(session_pointer, "%d\n", option);
 		char *prompt = (char*) calloc(100, 1);
 		// check for error reading the option from stdin
 		if (counter != 1) {
@@ -191,14 +192,14 @@ size_t get_user_option(FILE *session_pointer, bool session_backup, size_t min, s
 		} 
 		
 		if (option < min || option > max) {
-			prompt = "You entered an invalid option.";
-			puts(prompt);
+			prompt = "\nYou entered an invalid option.\n";
+			fprintf(stdout, prompt);
 			if (session_backup) {
 				fputs(prompt, session_pointer);
 			}
 			sleep(1);
-			prompt = "Enter your option again:";
-			puts(prompt);
+			prompt = "\nEnter your option again:\n";
+			fprintf(stdout, prompt);
 			if (session_backup) {
 				fputs(prompt, session_pointer);
 			}

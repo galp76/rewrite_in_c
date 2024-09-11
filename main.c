@@ -50,8 +50,6 @@ int main(void) {
 			puts("An error occurs trying to create the session file.\n");
 			exit(2);
 		// OJO ESTE ELSE HAY QUE BORRARLO
-		} else {
-			printf("%s\n", session_string);
 		}
 	}
 	FILE *session_pointer = fopen(session_string, "w");
