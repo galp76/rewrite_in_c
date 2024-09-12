@@ -44,30 +44,71 @@ int main(void) {
 	// if session_backup is set to true in configuration.txt, proceed to create the file to store the interactions of the session
 	char *session_string = (char*) calloc(100, 1);
 	int session_check = 0;
+	FILE *session_pointer = NULL;
 	if (session_backup) {
 		session_check = snprintf(session_string, 100, "users/%s/sessions/%d-%02d-%02d_%02d:%02d.txt", user, tm.tm_year + 1900, tm.tm_mon + 1, tm.tm_mday, tm.tm_hour, tm.tm_min);
 		if (session_check < 0 || session_check > 100) {
 			puts("An error occurs trying to create the session file.\n");
 			exit(2);
-		// OJO ESTE ELSE HAY QUE BORRARLO
 		}
-	}
-	FILE *session_pointer = fopen(session_string, "w");
-	//check for error creating the file
-	if (session_pointer == NULL) {
-		puts("An error occurs trying to create the session file.\n");
-		exit(2);
+
+		session_pointer = fopen(session_string, "w");
+		//check for error creating the file
+		if (session_pointer == NULL) {
+			puts("An error occurs trying to create the session file.\n");
+			exit(2);
+		}
 	}
 
 	// ask the user for an option to redirect to the proper module
 	const char *prompt = "\nPor favor indica una de las siguientes opciones:\n\n  1. Práctica.\n  2. Tarea.\n  3. Salir del sistema.\n\nOpción:\n";
 	size_t user_option = 0;
-	do {
+	while(1) {
 		printf("%s", prompt);
 		if (session_backup) {
 			fputs(prompt, session_pointer);
 		}
-		user_option = get_user_option(session_pointer, session_backup, 1, 3);
+		user_option = get_user_option(session_pointer, session_backup);
 		printf("You selected option %d.\n", user_option);
-	} while (user_option == 0);
+
+		// OJO ESTE TMP_BREAK HAY QUE REMOVERLO CUANDO SE IMPLEMENTEN LOS MODULOS
+		bool tmp_break = false;
+		switch (user_option) {
+			case 1: 
+				prompt = "\nLet's continue to the practice module.\n";
+				printf("%s", prompt);
+				if (session_backup) {
+					fputs(prompt, session_pointer);
+				}
+				sleep(1);
+				//practice(session_pointer, session_backup, "leon1.8t");
+				// OJO ESTE TMP_BREAK  HAY QUE REMOVERLO
+				tmp_break = true;
+				break;
+			case 2:
+				prompt = "\nLet's continue to the homework module.\n";
+				printf("%s", prompt);
+				if (session_backup) {
+					fputs(prompt, session_pointer);
+				}
+				sleep(1);
+				//homework(session_pointer, session_backup, "leon1.8t", user);
+				// OJO ESTE TMP_BREAK  HAY QUE REMOVERLO
+				tmp_break = true;
+				break;
+			case 3:
+				prompt = "\nGetting out of the system.\n";
+				printf("%s", prompt);
+				if (session_backup) {
+					fputs(prompt, session_pointer);
+				}
+				sleep(1);
+				exit(0);
+			default:
+				sleep(1);
+				prompt = "\nYou entered an invalid option.\n\nEnter your option again:\n";
+		}
+		// OJO ESTO HAY QUE CAMBIARLO CUANDO SE IMPLEMENTEN LOS MODULOS
+		if (tmp_break) break;
+	}
 }

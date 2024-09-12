@@ -169,11 +169,14 @@ char *validate_user(void) {
 }
 
 // receives the session options and the boundaries of the return value
-size_t get_user_option(FILE *session_pointer, bool session_backup, size_t min, size_t max) {
+size_t get_user_option(FILE *session_pointer, bool session_backup) {
 	int option = 0;
+	char user_string[100];
 	while (1) {
-		int counter = fscanf(stdin, "%d", &option);
-		fprintf(session_pointer, "%d\n", option);
+		int counter = fscanf(stdin, "%s", user_string);
+		while (getchar() != '\n');
+		fprintf(session_pointer, "%s\n", user_string);
+		option = atoi(user_string);
 		char *prompt = (char*) calloc(100, 1);
 		// check for error reading the option from stdin
 		if (counter != 1) {
@@ -182,6 +185,7 @@ size_t get_user_option(FILE *session_pointer, bool session_backup, size_t min, s
 			if (session_backup) {
 				fputs(prompt, session_pointer);
 			}
+			return 0;
 			sleep(1);
 			prompt = "Enter your option again:";
 			puts(prompt);
@@ -190,23 +194,7 @@ size_t get_user_option(FILE *session_pointer, bool session_backup, size_t min, s
 			}
 			continue;
 		} 
-		
-		if (option < min || option > max) {
-			prompt = "\nYou entered an invalid option.\n";
-			fprintf(stdout, prompt);
-			if (session_backup) {
-				fputs(prompt, session_pointer);
-			}
-			sleep(1);
-			prompt = "\nEnter your option again:\n";
-			fprintf(stdout, prompt);
-			if (session_backup) {
-				fputs(prompt, session_pointer);
-			}
-			continue;
-		} else {
-			break;
-		}
+		break;
 	}
 
 	return option;
