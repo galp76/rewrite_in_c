@@ -106,7 +106,69 @@ void equal_or_not_sum(int tmp_total, const char *prompt, FILE *session_pointer, 
 	}
 }
 
+// ********* DEFINITIONS OF LINE STRUCT AND IYS ASSOCIATED FUNCTIONS **************
+
+typedef struct {
+	char left_sep;
+	size_t left_pad;
+	char *content;
+	size_t right_pad;
+	char right_sep;
+} Line;
+
+Line new_line(char left_sep, size_t left_pad, char *content, size_t right_pad, char right_sep) {
+	Line result;
+	result.left_sep = left_sep;
+	result.left_pad = left_pad;
+	result.content = content;
+	result.right_pad = right_pad;
+	result.right_sep = right_sep;
+
+	return result;
+}
+
+char *repeat(char ch, size_t number) {
+	char *result = (char*) calloc(number + 1, 1);
+	for (size_t i = 0; i < number; i++) {
+		result[i] = ch;
+	}
+	result[number] = '\0';
+
+	return result;
+}
+
+char *build_line(Line line) {
+	char *result = (char*) calloc(300, 1);
+	result[0] = line.left_sep;
+	strcat(result, repeat(' ', line.left_pad));
+	strcat(result, line.content);
+	strcat(result, repeat(' ', line.right_pad));
+	strcat(result, &line.right_sep);
+
+	return result;
+}
+
+void append_to_line(Line *line, char *new_content) {
+	strcat(line->content, new_content);
+	line->left_pad -= strlen(new_content);
+}
+
+void prepend_to_line(Line *line, char *new_content) {
+	char *tmp_string = (char*) calloc(100, 1);
+	strcpy(tmp_string, new_content);
+	strcat(tmp_string, line->content);
+	line->content = tmp_string;
+	line->left_pad -= strlen(new_content);
+}
+
 void sum() {
+	char content[100] = "Inside sum()";
+	Line test = new_line('*', 20, content, 10, '*');
+	puts(build_line(test));
+	prepend_to_line(&test, "German");
+	puts(build_line(test));
+	append_to_line(&test, "Leonardo");
+	puts(build_line(test));
 	puts("Inside sum()");
 }
 
