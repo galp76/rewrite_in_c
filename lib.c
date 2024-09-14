@@ -3,7 +3,6 @@
 #include <string.h>
 #include <stddef.h>
 #include <stdbool.h>
-#include <time.h>
 #include <unistd.h>
 
 // receives a prompt and a max length (size) for the buffer that will be returned
@@ -154,7 +153,7 @@ char **file_to_array_of_lines(const char *filename, char separator, size_t *resu
 // validates a user using the information from users.txt
 char *validate_user(void) {
 	char *user = get_user_input("Enter the username: ", 10);
-	char *password = get_user_input("Enter the password: ", 10);
+	char *password = get_user_input("\nEnter the password: ", 10);
 	size_t users_lines_size = 0;
 	char **users_lines = file_to_array_of_lines("users.txt", '\n', &users_lines_size);
 	for (size_t i = 0; i < users_lines_size; i++) {
@@ -198,4 +197,34 @@ size_t get_user_option(FILE *session_pointer, bool session_backup) {
 	}
 
 	return option;
+}
+
+//   *********  AQUI EMPIEZAN LAS FUNCIONES UTILIZADAS EN PRACTICE.C   **************
+
+void display_options(char **options, size_t options_size, bool display_prompt, FILE *session_pointer, bool session_backup) {
+	char *prompt = (char*) calloc(100, 1);
+	if (display_prompt) {
+		sprintf(prompt, "\nPlease type one of the options and press ENTER:\n\n");
+		printf("%s", prompt);
+		if (session_backup) {
+			fputs(prompt, session_pointer);
+		}
+	}
+	for (size_t i = 0; i < options_size; i++) {
+		if (i < 9) {
+			sprintf(prompt, "  %d. %s\n", i + 1, options[i]);
+		} else {
+			sprintf(prompt, " %d. %s\n", i + 1, options[i]);
+		}
+		printf("%s", prompt);
+		if (session_backup) {
+			fputs(prompt, session_pointer);
+		}
+	}
+	sprintf(prompt, "\nOption:\n");
+	printf("%s", prompt);
+	if (session_backup) {
+		fputs(prompt, session_pointer);
+	}
+	free(prompt); prompt = NULL;
 }
