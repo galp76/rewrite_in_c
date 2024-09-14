@@ -33,14 +33,17 @@ int main(void) {
 	bool session_backup = false;
 	size_t config_lines_size = 0;
 	char **config_lines = file_to_array_of_lines("configuration.txt", '\n', &config_lines_size);
+	char **parts;
 	for (size_t i = 0; i < config_lines_size; i++) {
 		size_t parts_size = 0;
-		char **parts = split(config_lines[i], '=', &parts_size);
+		parts = split(config_lines[i], '=', &parts_size);
 		if ((strcmp(parts[0], "session_backup") == 0) && (strcmp(parts[1], "true") == 0)) {
 			session_backup = true;
 			break;
 		}
 	}
+	free(config_lines); config_lines = NULL;
+	free(parts); parts = NULL;
 
 	// if session_backup is set to true in configuration.txt, proceed to create the file to store the interactions of the session
 	char *session_string = (char*) calloc(100, 1);
@@ -60,6 +63,8 @@ int main(void) {
 			exit(2);
 		}
 	}
+	free(session_string); session_string = NULL;
+	free(user); user = NULL;
 
 	// ask the user for an option to redirect to the proper module
 	sleep(1);

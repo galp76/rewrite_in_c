@@ -106,7 +106,7 @@ void equal_or_not_sum(int tmp_total, const char *prompt, FILE *session_pointer, 
 	}
 }
 
-// ********* DEFINITIONS OF LINE STRUCT AND IYS ASSOCIATED FUNCTIONS **************
+// ********* DEFINITIONS OF LINE STRUCT AND ITS ASSOCIATED FUNCTIONS **************
 
 typedef struct {
 	char left_sep;
@@ -138,12 +138,15 @@ char *repeat(char ch, size_t number) {
 }
 
 char *build_line(Line line) {
-	char *result = (char*) calloc(300, 1);
+	size_t content_size = strlen(line.content);
+	size_t total_len = 1 + line.left_pad + content_size + line.right_pad + 2;
+	char *result = (char*) calloc(total_len, 1);
 	result[0] = line.left_sep;
 	strcat(result, repeat(' ', line.left_pad));
 	strcat(result, line.content);
 	strcat(result, repeat(' ', line.right_pad));
 	strcat(result, &line.right_sep);
+	result[total_len - 1] = '\0';
 
 	return result;
 }
@@ -161,26 +164,79 @@ void prepend_to_line(Line *line, char *new_content) {
 	line->left_pad -= strlen(new_content);
 }
 
-void sum() {
-	char content[100] = "Inside sum()";
-	Line test = new_line('*', 20, content, 10, '*');
-	puts(build_line(test));
-	prepend_to_line(&test, "German");
-	puts(build_line(test));
-	append_to_line(&test, "Leonardo");
-	puts(build_line(test));
-	puts("Inside sum()");
+// *************** HERE FINISHES THE DECLARATIONS OF THE STRUCT LINE ************************
+
+void display_sum(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
+	size_t line_length = strlen(operands[0]);
+	Line tmp_line = new_line(' ', 15 - strlen(operands[0]), operands[0], 3, '+');
+	char *prompt = build_line(tmp_line);
+	printf("\n%s\n", prompt);
+	if (session_backup) {
+		fprintf(session_pointer, "\n%s\n", prompt);
+	}
+	for (size_t i = 1; i < operands_size; i++) {
+		if (strlen(operands[i]) > line_length) {
+			line_length = strlen(operands[i]);
+		}
+		tmp_line = new_line(' ', 15 - strlen(operands[i]), operands[i], 5, ' ');
+	    prompt = build_line(tmp_line);
+		puts(prompt);
+		if (session_backup) {
+			fputs(prompt, session_pointer);
+		}
+	}
+	tmp_line = new_line(' ', 15 - line_length, repeat('-', line_length), 5, ' ');
+	prompt = build_line(tmp_line);
+	puts(prompt);
+	if (session_backup) {
+		fputs(prompt, session_pointer);
+	}
+	free(prompt); prompt = NULL;
+}
+
+void sum(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
+	bool use_carry = false;
+	unsigned int total = 0;
+	for (size_t i = 0; i < operands_size; i++) {
+		total += atoi(operands[i]);
+	}
+	Line result_line = new_line(' ', 15, "", 5, ' ');
+	Line carry_line = new_line(' ', 14, "", 5, ' ');
+	char prompt[200];
+	sprintf(prompt, "\nLet's do the following exercise:\n");
+	puts(prompt);
+	if (session_backup) {
+		fputs(prompt, session_pointer);
+	}
+	sleep(1);
+	display_sum(operands, operands_size, session_pointer, session_backup);
+	printf("%s\n", build_line(result_line));
+	if (session_backup) {
+		fprintf(session_pointer, "%s\n", build_line(result_line));
+	}
+
+	int numbers[operands_size];
+	for (size_t i = 0; i < operands_size; i++) {
+		numbers[i] = atoi(operands[i]);
+	}
+
+	int carry = 0;
+	while (total != 0) {
+		int tmp_total = 0;
+
+	}
 }
 
 int main(void) {
+	char **operands;
+	size_t operands_size = 0;
 	const char *prompt = "\nIf you don't want to finish the exercise, you can get out entering \"s\". Please enter the operation without any whitespace, letters or special characters.\n\nExample:\n\t12345+6789+9685+12599\n";
 	// ****** OJO ESTAS DOS LINEAS QUE SIGUEN HAAY QQUE BORRARLAS, TIENEN QUE SER ARGUMENTOS *****
 	FILE *session_pointer = fopen("prueba.txt", "w");
 	bool session_backup = true;
 	while (1) {
 		char *operation = get_user_input_sum(prompt, "+", session_pointer, true);
-		size_t operands_size = 0;
-		char **operands = split(operation, '+', &operands_size);
+		operands = split(operation, '+', &operands_size);
 
 		bool wrong_operators = false;
 		for (size_t i = 0; i < operands_size; i++) {
@@ -211,6 +267,5 @@ int main(void) {
 	}
 
 	sleep(1);
-	sum();
-	equal_or_not_sum(23, "\nEnter 23 to exit:\n", session_pointer, true);
+	sum(operands, operands_size, session_pointer, session_backup);
 }
