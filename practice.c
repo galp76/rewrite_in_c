@@ -30,8 +30,8 @@ void practice(FILE *session_pointer, bool session_backup) {
 			}
 		} else {
 			sleep(1);
-			sprintf(prompt, "\nInvalid option.\n\nEnter your option again:");
-			puts(prompt);
+			sprintf(prompt, "\nInvalid option.\n\nEnter your option again.\n\n");
+			printf("%s", prompt);
 			if (session_backup) {
 				fputs(prompt, session_pointer);
 			}
@@ -40,13 +40,13 @@ void practice(FILE *session_pointer, bool session_backup) {
 			continue;
 		}
 		sleep(1);
-		sprintf(prompt, "\n%s", repeat('*', 105));
-		puts(prompt);
+		sprintf(prompt, "\n%s\n", repeat('*', 105));
+		printf("%s", prompt);
 		if (session_backup) {
 			fputs(prompt, session_pointer);
 		}
-		sprintf(prompt, "\nSelect an option to continue with another exercise, or enter the letter \"s\" to quit the program.\n");
-		puts(prompt);
+		sprintf(prompt, "\nSelect an option to continue with another exercise, or enter the letter \"s\" to quit the program.\n\n");
+		printf("%s", prompt);
 		if (session_backup) {
 			fputs(prompt, session_pointer);
 		}

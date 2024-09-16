@@ -24,7 +24,7 @@ char *get_user_input_sum(const char *prompt, const char *operator, FILE *session
 	while (1) {
 		puts(prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 		int counter = fscanf(stdin, "%s", user_input);
 		if (counter != 1) {
@@ -38,7 +38,7 @@ char *get_user_input_sum(const char *prompt, const char *operator, FILE *session
 		}
 		if (strcmp(user_input, "s") == 0) {
 			if (session_backup) {
-				fputs(user_input, session_pointer);
+				fprintf(session_pointer, "%s\n", user_input);
 			}
 			sleep(1);
 			sprintf(prompt2, "\nGetting out of the exercise.\n");
@@ -77,7 +77,7 @@ char *get_user_input_sum(const char *prompt, const char *operator, FILE *session
 	}
 
 	if (session_backup) {
-		fputs(user_input, session_pointer);
+		fprintf(session_pointer, "%s\n", user_input);
 	}
 
 	return user_input;
@@ -184,7 +184,7 @@ void display_sum(char **operands, size_t operands_size, FILE *session_pointer, b
 	prompt = build_line(tmp_line);
 	puts(prompt);
 	if (session_backup) {
-		fputs(prompt, session_pointer);
+		fprintf(session_pointer, "\n%s\n", prompt);
 	}
 	free(prompt); prompt = NULL;
 }
@@ -237,7 +237,7 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 			sleep(1);
 			puts("\nCorrect.");
 			if (session_backup) {
-				fputs("\nCorrect.", session_pointer);
+				fprintf(session_pointer, "%s\n", "\nCorrect.");
 			}
 			sleep(1);
 			sprintf(prompt2, "And with %d that we carry, how much is it?", carry);
@@ -249,7 +249,7 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 			sleep(1);
 			puts("\nCorrect.");
 			if (session_backup) {
-				fputs("\nCorrect.", session_pointer);
+				fprintf(session_pointer, "%s\n", "\nCorrect.");
 			}
 
 			int tmp_sum = 0;
@@ -261,7 +261,7 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 				sprintf(prompt, "We put the %d, and we're donde with the exercise.", tmp_total);
 				puts(prompt);
 				if (session_backup) {
-					fputs(prompt, session_pointer);
+					fprintf(session_pointer, "%s\n", prompt);
 				}
 				char tmp_prompt[10];
 				sprintf(tmp_prompt, "%d", tmp_total);
@@ -276,7 +276,7 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 				sprintf(prompt, "%s", build_line(result_line));
 				puts(prompt);
 				if (session_backup) {
-					fputs(prompt, session_pointer);
+					fprintf(session_pointer, "%s\n", prompt);
 				}
 				return;
 			}
@@ -287,20 +287,20 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 			sprintf(prompt, "We put the %d and carry %d.", tmp_total % 10, tmp_total / 10);
 			puts(prompt);
 			if (session_backup) {
-				fputs(prompt, session_pointer);
+				fprintf(session_pointer, "%s\n", prompt);
 			}
 			sleep(1);
 			sprintf(prompt, "Let's continue with the exercise.");
 			puts(prompt);
 			if (session_backup) {
-				fputs(prompt, session_pointer);
+				fprintf(session_pointer, "%s\n", prompt);
 			}
 		} else {
 			sleep(1);
 			sprintf(prompt, "\nCorrect, we're done with the exercise.");
 			puts(prompt);
 			if (session_backup) {
-				fputs(prompt, session_pointer);
+				fprintf(session_pointer, "%s\n", prompt);
 			}
 		}
 		char tmp_prompt[10];
@@ -316,7 +316,7 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 		sprintf(prompt, "%s", build_line(result_line));
 		puts(prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 		if (!use_carry) {
 			use_carry = true;
