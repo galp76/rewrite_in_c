@@ -167,7 +167,7 @@ char *validate_user(void) {
 	return NULL;
 }
 
-// receives the session options and the boundaries of the return value
+// receives the session options
 size_t get_user_option(FILE *session_pointer, bool session_backup) {
 	int option = 0;
 	char user_string[100];

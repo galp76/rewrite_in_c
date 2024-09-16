@@ -88,7 +88,7 @@ int main(void) {
 					fputs(prompt, session_pointer);
 				}
 				sleep(1);
-				practice(session_pointer, session_backup, "leon1.8t");
+				practice(session_pointer, session_backup);
 				// OJO ESTE TMP_BREAK  HAY QUE REMOVERLO
 				tmp_break = true;
 				break;

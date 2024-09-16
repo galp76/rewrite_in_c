@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "lib.c"
 
 bool contains(char *string, char ch) {
 	size_t i = 0;
@@ -66,10 +65,6 @@ char *get_user_input_sum(const char *prompt, const char *operator, FILE *session
 					fputs(prompt2, session_pointer);
 				}
 				sleep(1);
-/*				puts(prompt);
-				if (session_backup) {
-					fputs(prompt, session_pointer);
-				}*/
 				while (getchar() != '\n');
 				must_repeat = true;
 				break;
@@ -223,17 +218,119 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 	int carry = 0;
 	while (total != 0) {
 		int tmp_total = 0;
+		char prompt2[100];
+		sprintf(prompt2, "\nHow much is ");
+		for (size_t i = 0; i < operands_size; i++) {
+			tmp_total += numbers[i] % 10;
+			char tmp_string[20];
+			if (i < operands_size - 1) {
+				sprintf(tmp_string, "%d + ", numbers[i] % 10);
+			} else {
+				sprintf(tmp_string, "%d", numbers[i] % 10);
+			}
+			strcat(prompt2, tmp_string);
+			numbers[i] /= 10;
+		}
+		sleep(1);
+		equal_or_not_sum(tmp_total, prompt2, session_pointer, session_backup);
+		if (use_carry) {
+			sleep(1);
+			puts("\nCorrect.");
+			if (session_backup) {
+				fputs("\nCorrect.", session_pointer);
+			}
+			sleep(1);
+			sprintf(prompt2, "And with %d that we carry, how much is it?", carry);
+			tmp_total += carry;
+			equal_or_not_sum(tmp_total, prompt2, session_pointer, session_backup);
+		}
+		carry = tmp_total / 10;
+		if (total >= 10) {
+			sleep(1);
+			puts("\nCorrect.");
+			if (session_backup) {
+				fputs("\nCorrect.", session_pointer);
+			}
 
+			int tmp_sum = 0;
+			for (size_t k = 0; k < operands_size; k++) {
+				tmp_sum += numbers[k];
+			}
+			if (tmp_sum == 0) {
+				sleep(1);
+				sprintf(prompt, "We put the %d, and we're donde with the exercise.", tmp_total);
+				puts(prompt);
+				if (session_backup) {
+					fputs(prompt, session_pointer);
+				}
+				char tmp_prompt[10];
+				sprintf(tmp_prompt, "%d", tmp_total);
+				prepend_to_line(&result_line, tmp_prompt);
+				sleep(1);
+				sprintf(prompt, "\n%s%s", build_line(carry_line), "<--- Carry");
+				puts(prompt);
+				if (session_backup) {
+					fputs(prompt, session_pointer);
+				}
+				display_sum(operands, operands_size, session_pointer, session_backup);
+				sprintf(prompt, "%s", build_line(result_line));
+				puts(prompt);
+				if (session_backup) {
+					fputs(prompt, session_pointer);
+				}
+				return;
+			}
+			char tmp_prompt[10];
+			sprintf(tmp_prompt, "%d", carry);
+			prepend_to_line(&carry_line, tmp_prompt);
+			sleep(1);
+			sprintf(prompt, "We put the %d and carry %d.", tmp_total % 10, tmp_total / 10);
+			puts(prompt);
+			if (session_backup) {
+				fputs(prompt, session_pointer);
+			}
+			sleep(1);
+			sprintf(prompt, "Let's continue with the exercise.");
+			puts(prompt);
+			if (session_backup) {
+				fputs(prompt, session_pointer);
+			}
+		} else {
+			sleep(1);
+			sprintf(prompt, "\nCorrect, we're done with the exercise.");
+			puts(prompt);
+			if (session_backup) {
+				fputs(prompt, session_pointer);
+			}
+		}
+		char tmp_prompt[10];
+		sprintf(tmp_prompt, "%d", tmp_total % 10);
+		prepend_to_line(&result_line, tmp_prompt);
+		sleep(1);
+		sprintf(prompt, "\n%s%s", build_line(carry_line), "<--- Carry");
+		puts(prompt);
+		if (session_backup) {
+			fputs(prompt, session_pointer);
+		}
+		display_sum(operands, operands_size, session_pointer, session_backup);
+		sprintf(prompt, "%s", build_line(result_line));
+		puts(prompt);
+		if (session_backup) {
+			fputs(prompt, session_pointer);
+		}
+		if (!use_carry) {
+			use_carry = true;
+		}
+		total /= 10;
 	}
+
+	return;
 }
 
-int main(void) {
+int main_sum(FILE *session_pointer, bool session_backup) {
 	char **operands;
 	size_t operands_size = 0;
 	const char *prompt = "\nIf you don't want to finish the exercise, you can get out entering \"s\". Please enter the operation without any whitespace, letters or special characters.\n\nExample:\n\t12345+6789+9685+12599\n";
-	// ****** OJO ESTAS DOS LINEAS QUE SIGUEN HAAY QQUE BORRARLAS, TIENEN QUE SER ARGUMENTOS *****
-	FILE *session_pointer = fopen("prueba.txt", "w");
-	bool session_backup = true;
 	while (1) {
 		char *operation = get_user_input_sum(prompt, "+", session_pointer, true);
 		operands = split(operation, '+', &operands_size);
@@ -251,8 +348,17 @@ int main(void) {
 			wrong_operands = true;
 		}
 
+		size_t i = 0;
+		size_t operator_counter = 0;
+		while (operation[i] != '\0') {
+			if (operation[i] == '+') {
+				operator_counter++;
+			}
+			i++;
+		}
+
 		char *warning = (char*) calloc(100, 1);
-		if (wrong_operators || wrong_operands) {
+		if (wrong_operators || wrong_operands || (operator_counter >= operands_size)) {
 			sprintf(warning, "\nThere is an error in the quantity of operators and/or operands.\n");
 			sleep(1);
 			printf("%s", warning);
