@@ -468,7 +468,42 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 		}
 		exit(0);
 	}
-	// LLEGAMOS HASTA LA LINEA 120 DE RUST/subtraction_rust/lib.rs
+	Line result_line = new_line(' ', 15, "", 5, ' ');
+	Line modified_minuend_line = new_line(' ', 15, "", 5, ' ');
+	int modified_minuend_counter = 0;
+	sleep(1);
+	if (original_length == 2) {
+		sprintf(prompt, "\nLet's do the following exercise:\n");
+		printf("%s", prompt);
+		if (session_backup) {
+			fprintf(session_pointer, "%s", prompt);
+		}
+	} else {
+		sprintf(prompt, "\nNow let's continue with the subtraction:\n");
+		printf("%s", prompt);
+		if (session_backup) {
+			fprintf(session_pointer, "%S", prompt);
+		}
+	}
+	sleep(1);
+	display_subtraction(operands, operands_size, session_pointer, session_backup);
+	sprintf(prompt, "%s", build_line(result_line));
+	printf("%s\n", prompt);
+	if (session_backup) {
+		fprintf(session_pointer, "%s\n", prompt);
+	}
+	while (max_length > 0) {
+		int tmp_total = numbers[0]%10 - numbers[1]%10;
+		sprintf(prompt, "%s-%s", numbers[0]%10, numbeers[1]%10);
+		if (tmp_total < 10) {
+			if (!use_modified_minuend) {
+				use_modified_minuend = true;
+				prepend_to_line(&modified_minuend_line, ' ');
+			}
+			sleep(1);
+// ******* LLEGAMOS HASTA LA LINEA 143 DE RUST/subtraction_rust/lib.rs
+		}
+	}
 }
 
 int main(/*FILE *session_pointer, bool session_backup*/) {
