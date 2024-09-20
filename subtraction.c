@@ -441,6 +441,30 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 	return;
 }
 
+void modify_minuend(Line *modified_minuend_line, int minuend, int *new_minuend, int *counter) {
+	int number = minuend;
+	number /= 10;
+	char *modified_minuend = (char*) calloc(50, 1);
+	while (1) {
+		if (number % 10 == 0) {
+			counter += 1;
+			prepend_to_line(modified_minuend_line, "9");
+			strcat(modified_minuend, "9");
+			number /= 10;
+		} else {
+			char ch[1];
+			sprintf(ch, "%s", (number % 10) - 1);
+			prepend_to_line(modified_minuend_line, ch);
+			char *tmp_string = (char*) calloc(50, 1);
+			sprintf(tmp_string, "%d", (number % 10) - 1);
+			strcat(tmp_string, modified_minuend);
+			modified_minuend = tmp_string;
+			break;
+		}
+	}
+
+}
+
 void subtraction(char **operands, size_t operands_size, size_t original_length, FILE *session_pointer, bool session_backup) {
 	bool use_modified_minuend = false;
 	int numbers[2];
@@ -494,14 +518,18 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 	}
 	while (max_length > 0) {
 		int tmp_total = numbers[0]%10 - numbers[1]%10;
-		sprintf(prompt, "%s-%s", numbers[0]%10, numbeers[1]%10);
+		sprintf(prompt, "%d-%d", numbers[0]%10, numbers[1]%10);
 		if (tmp_total < 10) {
 			if (!use_modified_minuend) {
 				use_modified_minuend = true;
-				prepend_to_line(&modified_minuend_line, ' ');
+				prepend_to_line(&modified_minuend_line, " ");
 			}
 			sleep(1);
-// ******* LLEGAMOS HASTA LA LINEA 143 DE RUST/subtraction_rust/lib.rs
+			sprintf(prompt, "\nSince %d is less than %d, we borrow from the left and continue:\n", numbers[0]%10, numbers[1]%10);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+// ************* QUEDAMOS EN LA LINEA 146 ********************* 			
 		}
 	}
 }
