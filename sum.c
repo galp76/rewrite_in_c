@@ -101,66 +101,6 @@ void equal_or_not_sum(int tmp_total, const char *prompt, FILE *session_pointer, 
 	}
 }
 
-// ********* DEFINITIONS OF LINE STRUCT AND ITS ASSOCIATED FUNCTIONS **************
-
-typedef struct {
-	char left_sep;
-	size_t left_pad;
-	char *content;
-	size_t right_pad;
-	char right_sep;
-} Line;
-
-Line new_line(char left_sep, size_t left_pad, char *content, size_t right_pad, char right_sep) {
-	Line result;
-	result.left_sep = left_sep;
-	result.left_pad = left_pad;
-	result.content = content;
-	result.right_pad = right_pad;
-	result.right_sep = right_sep;
-
-	return result;
-}
-
-char *repeat(char ch, size_t number) {
-	char *result = (char*) calloc(number + 1, 1);
-	for (size_t i = 0; i < number; i++) {
-		result[i] = ch;
-	}
-	result[number] = '\0';
-
-	return result;
-}
-
-char *build_line(Line line) {
-	size_t content_size = strlen(line.content);
-	size_t total_len = 1 + line.left_pad + content_size + line.right_pad + 2;
-	char *result = (char*) calloc(total_len, 1);
-	result[0] = line.left_sep;
-	strcat(result, repeat(' ', line.left_pad));
-	strcat(result, line.content);
-	strcat(result, repeat(' ', line.right_pad));
-	strcat(result, &line.right_sep);
-	result[total_len - 1] = '\0';
-
-	return result;
-}
-
-void append_to_line(Line *line, char *new_content) {
-	strcat(line->content, new_content);
-	line->left_pad -= strlen(new_content);
-}
-
-void prepend_to_line(Line *line, char *new_content) {
-	char *tmp_string = (char*) calloc(100, 1);
-	strcpy(tmp_string, new_content);
-	strcat(tmp_string, line->content);
-	line->content = tmp_string;
-	line->left_pad -= strlen(new_content);
-}
-
-// *************** HERE FINISHES THE DECLARATIONS OF THE STRUCT LINE ************************
-
 void display_sum(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
 	size_t line_length = strlen(operands[0]);
 	Line tmp_line = new_line(' ', 15 - strlen(operands[0]), operands[0], 3, '+');
