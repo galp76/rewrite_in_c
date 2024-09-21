@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include "sum.c"
+#include "subtraction.c"
 
 void practice(FILE *session_pointer, bool session_backup) {
 	size_t options_size = 0;
@@ -26,6 +27,9 @@ void practice(FILE *session_pointer, bool session_backup) {
 			switch (user_option) {
 				case 1:
 					main_sum(session_pointer, session_backup);
+					break;
+				case 2:
+					main_subtraction(session_pointer, session_backup);
 					break;
 			}
 		} else {

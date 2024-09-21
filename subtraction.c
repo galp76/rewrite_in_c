@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <math.h>
-#include "lib.c" // OJO ESTA LINEA HAY QUE BORRARLA CUANDO SE INTEGRE EN practice.c
 
 bool contains(char *string, char ch) {
 	size_t i = 0;
@@ -528,12 +527,9 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 	}
 	while (max_length > 0) {
 		int tmp_total = numbers[0]%10 - numbers[1]%10;
-		printf("tmp_total = %d\n", tmp_total);
 		char *tmp_string = (char*) calloc(50, 1);
 		sprintf(tmp_string, "%d-%d", numbers[0]%10, numbers[1]%10);
-		puts("YA PASAMOS");
 		if (tmp_total < 0) {
-			puts("dentro");
 			if (!use_modified_minuend) {
 				use_modified_minuend = true;
 				prepend_to_line(&modified_minuend_line, " ");
@@ -544,16 +540,13 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 			if (session_backup) {
 				fprintf(session_pointer, "%s", prompt);
 			}
-			puts("Antes de modify minuend");
 			modify_minuend(&modified_minuend_line, &numbers[0], &modified_minuend_counter);
-			puts("Despues de modify minuend");
 			char *tmp_string2 = (char*) calloc(50, 1);
 			sprintf(tmp_string2, "%d", 1);
 			strcat(tmp_string2, tmp_string);
 			tmp_string = tmp_string2;
 			tmp_total += 10;
 		} else {
-			puts("ya pasamos");
 			modified_minuend_counter -= 1;
 			if (modified_minuend_counter < 0) {
 				prepend_to_line(&modified_minuend_line, " ");
@@ -563,7 +556,6 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 		numbers[1] /= 10;
 		sprintf(prompt, "\nHow much is %s?\n", tmp_string);
 		sleep(1);
-		puts("YA PASAMOS");
 		equal_or_not_subtraction(tmp_total, prompt, session_pointer, session_backup);
 		if (max_length > 1) {
 			sleep(1);
@@ -573,14 +565,14 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 				fprintf(session_pointer, "%s", prompt);
 			}
 			sleep(1);
-			sprintf(prompt, "\nLet's continue with the exercise.\n");
+			sprintf(prompt, "\nLet's continue with the exercise.\n\n");
 			printf("%s", prompt);
 			if (session_backup) {
 				fprintf(session_pointer, "%s", prompt);
 			}
 		} else {
 			sleep(1);
-			sprintf(prompt, "\nCorrect, we're done with the exercise.\n");
+			sprintf(prompt, "\nCorrect, we're done with the exercise.\n\n");
 			printf("%s", prompt);
 			if (session_backup) {
 				fprintf(session_pointer, "%s", prompt);
@@ -600,20 +592,16 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 		}
 		display_subtraction(operands, operands_size, session_pointer, session_backup);
 		sprintf(prompt, build_line(result_line));
-		printf("%s\n", prompt);
+		printf("%s\n\n", prompt);
 		if (session_backup) {
-			fprintf(session_pointer, "%s\n", prompt);
+			fprintf(session_pointer, "%s\n\n", prompt);
 		}
 
 		max_length -= 1;
 	}
 }
 
-int main(/*FILE *session_pointer, bool session_backup*/) {
-	// OJO ESTAS DOS LINEAS QUE SIGUEN HAY QUE BORRARLAS, TIENEN QUE SER ARGUMENTOS
-	FILE *session_pointer = fopen("prueba.txt", "w");
-	bool session_backup = true;
-
+int main_subtraction(FILE *session_pointer, bool session_backup) {
 	char **operands;
 	size_t operands_size = 0;
 	const char *prompt = "\nIf you don't want to finish the exercise, you can get out entering \"s\". Please enter the operation without any whitespace, letters or special characters.\n\nExample:\n\t12345-6789-9685-12599\n";
