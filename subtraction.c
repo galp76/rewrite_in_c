@@ -4,6 +4,7 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <unistd.h>
+#include <math.h>
 #include "lib.c" // OJO ESTA LINEA HAY QUE BORRARLA CUANDO SE INTEGRE EN practice.c
 
 bool contains(char *string, char ch) {
@@ -441,19 +442,24 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 	return;
 }
 
-void modify_minuend(Line *modified_minuend_line, int minuend, int *new_minuend, int *counter) {
-	int number = minuend;
+// ***************** Here finishes the functions for more than 1 sustrahend ************************
+
+void modify_minuend(Line *modified_minuend_line, int *minuend, int *counter) {
+	int number = *minuend;
 	number /= 10;
 	char *modified_minuend = (char*) calloc(50, 1);
 	while (1) {
 		if (number % 10 == 0) {
-			counter += 1;
+			*counter += 1;
 			prepend_to_line(modified_minuend_line, "9");
-			strcat(modified_minuend, "9");
+			char *tmp_string = (char*) calloc(50, 1);
+			sprintf(tmp_string, "%d", (number % 10) - 1);
+			strcat(tmp_string, modified_minuend);
+			modified_minuend = tmp_string;
 			number /= 10;
 		} else {
 			char ch[1];
-			sprintf(ch, "%s", (number % 10) - 1);
+			sprintf(ch, "%d", (number % 10) - 1);
 			prepend_to_line(modified_minuend_line, ch);
 			char *tmp_string = (char*) calloc(50, 1);
 			sprintf(tmp_string, "%d", (number % 10) - 1);
@@ -463,6 +469,10 @@ void modify_minuend(Line *modified_minuend_line, int minuend, int *new_minuend, 
 		}
 	}
 
+	*minuend = (*minuend / ((int) pow(10.0, (double) (strlen(modified_minuend) + 1))))
+			* ((int) pow(10.0, (double) (strlen(modified_minuend) + 1)))
+			+ (atoi(modified_minuend) * 10)
+			+ (*minuend % 10);
 }
 
 void subtraction(char **operands, size_t operands_size, size_t original_length, FILE *session_pointer, bool session_backup) {
@@ -477,7 +487,7 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 		numbers[i] = atoi(operands[i]);
 	}
 	int total = numbers[0] - numbers[1];
-	char prompt[200];
+	char *prompt = (char*) calloc(200, 1);
 	if (total < 0) {
 		sprintf(prompt, "\nThe result of the subtraction is negative.\n");
 		printf("%s", prompt);
@@ -518,19 +528,84 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 	}
 	while (max_length > 0) {
 		int tmp_total = numbers[0]%10 - numbers[1]%10;
-		sprintf(prompt, "%d-%d", numbers[0]%10, numbers[1]%10);
-		if (tmp_total < 10) {
+		printf("tmp_total = %d\n", tmp_total);
+		char *tmp_string = (char*) calloc(50, 1);
+		sprintf(tmp_string, "%d-%d", numbers[0]%10, numbers[1]%10);
+		puts("YA PASAMOS");
+		if (tmp_total < 0) {
+			puts("dentro");
 			if (!use_modified_minuend) {
 				use_modified_minuend = true;
 				prepend_to_line(&modified_minuend_line, " ");
 			}
 			sleep(1);
 			sprintf(prompt, "\nSince %d is less than %d, we borrow from the left and continue:\n", numbers[0]%10, numbers[1]%10);
+			printf("%s", prompt);
 			if (session_backup) {
 				fprintf(session_pointer, "%s", prompt);
 			}
-// ************* QUEDAMOS EN LA LINEA 146 ********************* 			
+			puts("Antes de modify minuend");
+			modify_minuend(&modified_minuend_line, &numbers[0], &modified_minuend_counter);
+			puts("Despues de modify minuend");
+			char *tmp_string2 = (char*) calloc(50, 1);
+			sprintf(tmp_string2, "%d", 1);
+			strcat(tmp_string2, tmp_string);
+			tmp_string = tmp_string2;
+			tmp_total += 10;
+		} else {
+			puts("ya pasamos");
+			modified_minuend_counter -= 1;
+			if (modified_minuend_counter < 0) {
+				prepend_to_line(&modified_minuend_line, " ");
+			}
 		}
+		numbers[0] /= 10;
+		numbers[1] /= 10;
+		sprintf(prompt, "\nHow much is %s?\n", tmp_string);
+		sleep(1);
+		puts("YA PASAMOS");
+		equal_or_not_subtraction(tmp_total, prompt, session_pointer, session_backup);
+		if (max_length > 1) {
+			sleep(1);
+			sprintf(prompt, "\nCorrect.\n");
+			printf("%s", prompt);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+			sleep(1);
+			sprintf(prompt, "\nLet's continue with the exercise.\n");
+			printf("%s", prompt);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+		} else {
+			sleep(1);
+			sprintf(prompt, "\nCorrect, we're done with the exercise.\n");
+			printf("%s", prompt);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+		}
+		char *tmp_number = (char*) calloc(1, 1);
+		sprintf(tmp_number, "%d", tmp_total % 10);
+		prepend_to_line(&result_line, tmp_number);
+		sleep(1);
+		if (use_modified_minuend) {
+			sprintf(prompt, build_line(modified_minuend_line));
+			strcat(prompt, "<=== Modified minuend\n");
+			printf("%s", prompt);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+		}
+		display_subtraction(operands, operands_size, session_pointer, session_backup);
+		sprintf(prompt, build_line(result_line));
+		printf("%s\n", prompt);
+		if (session_backup) {
+			fprintf(session_pointer, "%s\n", prompt);
+		}
+
+		max_length -= 1;
 	}
 }
 
