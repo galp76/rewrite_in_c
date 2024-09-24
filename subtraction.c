@@ -392,7 +392,7 @@ void modify_minuend(Line *modified_minuend_line, int *minuend, int *counter) {
 			*counter += 1;
 			prepend_to_line(modified_minuend_line, "9");
 			char *tmp_string = (char*) calloc(50, 1);
-			sprintf(tmp_string, "%d", (number % 10) - 1);
+			sprintf(tmp_string, "%d", 9);
 			strcat(tmp_string, modified_minuend);
 			modified_minuend = tmp_string;
 			number /= 10;
