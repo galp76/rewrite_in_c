@@ -531,14 +531,14 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 		size_t k = 0;
 		while (tmp_string[k] != '\0') {
 			if (tmp_string[k] == ' ') {
-				tmp_string[k] == '0';
+				tmp_string[k] = '0';
 			}
 			k++;
 		}
 		sum_operands[i] = tmp_string;
 	}
 
-	sprintf(prompt, "%s", "\nNow we have to sum all the partial results.'n");
+	sprintf(prompt, "%s", "\nNow we have to sum all the partial results.\n");
 	printf("%s", prompt);
 	if (session_backup) {
 		fprintf(session_pointer, "%s", prompt);
