@@ -391,6 +391,7 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 	size_t counter = 0;
 	Line result_line = new_line(' ', 15, "", 5, ' ');
 	Line *result_vector = (Line*) calloc(second_operand_length, sizeof(Line));
+	size_t result_vector_size = 0;
 	Line carry_line = new_line(' ', 15, "", 5, ' ');
 	int carry_value = ((numbers[0]%10) * (numbers[1]%10)) / 10;
 	prepend_to_line(&carry_line, " ");
@@ -410,12 +411,12 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 	}
 	while (second_operand_length - counter != 0) {
 		bool use_carry = false;
-		int fixed = numbers[0] % 10;
+		int fixed = numbers[1] % 10;
 		int first_operand = numbers[0];
 		while (first_operand != 0) {
 			int tmp_total = (first_operand % 10) * fixed;
 			char tmp_string[100];
-			sprintf(prompt, "%d*%d", first_operand % 10, fixed);
+			sprintf(tmp_string, "%d*%d", first_operand % 10, fixed);
 			first_operand /= 10;
 			sprintf(prompt, "\nHow much is %s?", tmp_string);
 			sleep(1);
@@ -435,7 +436,7 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 			if (!(second_operand_length-counter == 0 && first_operand == 0)) {
 				char tmp_value[10];
 				sprintf(tmp_value, "%d", carry_value);
-				prepend_to_line(carry_line, tmp_value);
+				prepend_to_line(&carry_line, tmp_value);
 				sleep(1);
 				printf("%s", "\nCorrect.\n");
 				if (session_backup) {
@@ -478,16 +479,75 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 				}
 				char tmp_string[1];
 				sprintf(tmp_string, "%d", tmp_total % 10);
-				prepend_to_line(result_line, tmp_string);
+				prepend_to_line(&result_line, tmp_string);
 			} else {
 				char tmp_string[2];
 				sprintf(tmp_string, "%d", tmp_total);
-				prepend_to_line(result_line, tmp_string);
+				prepend_to_line(&result_line, tmp_string);
 			}
 			display_multiplication(operands, operands_size, session_pointer, session_backup);
-// *********** OJO LLEGAMOS HASTA LA LINEA 177 EN RUST/multiplication_rust/lib.rs ***********
+			if (result_vector_size != 0) {
+				for (size_t i = 0; i < result_vector_size; i++) {
+					sprintf(prompt, "%s\n", build_line(result_vector[i]));
+					printf("%s", prompt);
+					if (session_backup) {
+						fprintf(session_pointer, "%s", prompt);
+					}
+				}
+			}
+			sprintf(prompt, "%s\n", build_line(result_line));
+			printf("%s", prompt);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+			use_carry = true;
 		}
+		
+		result_vector[result_vector_size] = result_line;
+		result_vector_size++;
+		result_line = new_line(' ', 15, "", 5, ' ');
+		carry_line = new_line(' ', 15, "", 5, ' ');
+		prepend_to_line(&carry_line, " ");
+		counter += 1;
+		for (size_t i = 0; i < counter; i++) {
+			prepend_to_line(&result_line, " ");
+		}
+		numbers[1] /= 10;
 	}
+	
+	sleep(1);
+	if (result_vector_size == 1) {
+		printf("%s", "\nWe've finished with the exercise.\n");
+		if (session_backup) {
+			fprintf(session_pointer, "%s", "\nWe've finished with the exercise.\n");
+		}
+		exit(0);
+	}
+
+	char **sum_operands = (char**) calloc(result_vector_size, sizeof(char*));
+	for (size_t i = 0; i < result_vector_size; i++) {
+		char *tmp_string = (char*) calloc(50, 1);
+		tmp_string = result_vector[i].content;
+		size_t k = 0;
+		while (tmp_string[k] != '\0') {
+			if (tmp_string[k] == ' ') {
+				tmp_string[k] == '0';
+			}
+			k++;
+		}
+		sum_operands[i] = tmp_string;
+	}
+
+	sprintf(prompt, "%s", "\nNow we have to sum all the partial results.'n");
+	printf("%s", prompt);
+	if (session_backup) {
+		fprintf(session_pointer, "%s", prompt);
+	}
+	sum_multiplication(sum_operands, result_vector_size, session_pointer, session_backup);
+	
+
+
+// *********** OJO LLEGAMOS HASTA LA LINEA 196 EN RUST/multiplication_rust/lib.rs ***********
 }
 
 int main(/*FILE *session_pointer, bool session_backup*/) {
