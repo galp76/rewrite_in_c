@@ -229,9 +229,9 @@ void display_sum_multiplication(char **operands, size_t operands_size, FILE *ses
 		}
 		tmp_line = new_line(' ', 15 - strlen(operands[i]), operands[i], 5, ' ');
 	    prompt = build_line(tmp_line);
-		puts(prompt);
+		printf("%s\n", prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 	}
 	tmp_line = new_line(' ', 15 - line_length, repeat('-', line_length), 5, ' ');
@@ -433,7 +433,7 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 				equal_or_not_multiplication(tmp_total, prompt, session_pointer, session_backup);
 			}
 			carry_value = tmp_total / 10;
-			if (!(second_operand_length-counter == 0 && first_operand == 0)) {
+			if (!(second_operand_length - counter == 1 && first_operand == 0)) {
 				char tmp_value[10];
 				sprintf(tmp_value, "%d", carry_value);
 				prepend_to_line(&carry_line, tmp_value);
@@ -450,7 +450,7 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
                         fprintf(session_pointer, "%s", prompt);
                     }
                 } else {
-                    sprintf(prompt, "We put the %d, and continue with multiplications corresponding to the following number: %d.\n", tmp_total, (numbers[0] / 10) % 10);
+                    sprintf(prompt, "We put the %d, and continue with the multiplications corresponding to the following number: %d.\n", tmp_total, (numbers[1] / 10) % 10);
                     printf("%s", prompt);
                     if (session_backup) {
                         fprintf(session_pointer, "%s", prompt);
@@ -544,10 +544,6 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 		fprintf(session_pointer, "%s", prompt);
 	}
 	sum_multiplication(sum_operands, result_vector_size, session_pointer, session_backup);
-	
-
-
-// *********** OJO LLEGAMOS HASTA LA LINEA 196 EN RUST/multiplication_rust/lib.rs ***********
 }
 
 int main(/*FILE *session_pointer, bool session_backup*/) {
