@@ -10,7 +10,6 @@
 bool contains_multiplication(char *string, char ch) {
 	size_t i = 0;
 	while (string[i] != '\0') {
-//		printf("Comparing %c with %c", string[i], ch);
 		if (string[i] == ch) {
 			return true;
 		}
@@ -105,7 +104,7 @@ void equal_or_not_multiplication(int tmp_total, const char *prompt, FILE *sessio
 
 void display_multiplication(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
 	size_t line_length = strlen(operands[0]);
-	Line tmp_line = new_line(' ', 15 - strlen(operands[0]), operands[0], 3, '-');
+	Line tmp_line = new_line(' ', 15 - strlen(operands[0]), operands[0], 3, '*');
 	char *prompt = build_line(tmp_line);
 	printf("\n%s\n", prompt);
 	if (session_backup) {
@@ -117,16 +116,16 @@ void display_multiplication(char **operands, size_t operands_size, FILE *session
 		}
 		tmp_line = new_line(' ', 15 - strlen(operands[i]), operands[i], 5, ' ');
 	    prompt = build_line(tmp_line);
-		puts(prompt);
+		printf("%s\n", prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 	}
 	tmp_line = new_line(' ', 15 - line_length, repeat('-', line_length), 5, ' ');
 	prompt = build_line(tmp_line);
-	puts(prompt);
+	printf("%s\n", prompt);
 	if (session_backup) {
-		fprintf(session_pointer, "\n%s\n", prompt);
+		fprintf(session_pointer, "%s\n", prompt);
 	}
 	free(prompt); prompt = NULL;
 }
@@ -385,7 +384,110 @@ void sum_multiplication(char **operands, size_t operands_size, FILE *session_poi
 // ***************** Here finishes the functions for the final sum ************************
 
 void multiplication(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
-	puts("Inside multiplication....");
+	int numbers[2];
+	numbers[0] = atoi(operands[0]);
+	numbers[1] = atoi(operands[1]);
+	size_t second_operand_length = strlen(operands[1]);
+	size_t counter = 0;
+	Line result_line = new_line(' ', 15, "", 5, ' ');
+	Line *result_vector = (Line*) calloc(second_operand_length, sizeof(Line));
+	Line carry_line = new_line(' ', 15, "", 5, ' ');
+	int carry_value = ((numbers[0]%10) * (numbers[1]%10)) / 10;
+	prepend_to_line(&carry_line, " ");
+	sleep(1);
+	char prompt[300];
+	sprintf(prompt, "%s", "\nLet's do the following exercise:\n");
+	printf("%s", prompt);
+	if (session_backup) {
+		fprintf(session_pointer, "%s", prompt);
+	}
+	sleep(1);
+	display_multiplication(operands, 2, session_pointer, session_backup);
+	sprintf(prompt, "%s", build_line(result_line));
+	printf("%s\n", prompt);
+	if (session_backup) {
+		fprintf(session_pointer, "%s\n", prompt);
+	}
+	while (second_operand_length - counter != 0) {
+		bool use_carry = false;
+		int fixed = numbers[0] % 10;
+		int first_operand = numbers[0];
+		while (first_operand != 0) {
+			int tmp_total = (first_operand % 10) * fixed;
+			char tmp_string[100];
+			sprintf(prompt, "%d*%d", first_operand % 10, fixed);
+			first_operand /= 10;
+			sprintf(prompt, "\nHow much is %s?", tmp_string);
+			sleep(1);
+			equal_or_not_multiplication(tmp_total, prompt, session_pointer, session_backup);
+			if (use_carry) {
+				sleep(1);
+				printf("%s", "\nCorrect.\n");
+				if (session_backup) {
+					fprintf(session_pointer, "%s", "\nCorrect.\n");
+				}
+				sleep(1);
+				sprintf(prompt, "And with %d that we carry how much is it?", carry_value);
+				tmp_total += carry_value;
+				equal_or_not_multiplication(tmp_total, prompt, session_pointer, session_backup);
+			}
+			carry_value = tmp_total / 10;
+			if (!(second_operand_length-counter == 0 && first_operand == 0)) {
+				char tmp_value[10];
+				sprintf(tmp_value, "%d", carry_value);
+				prepend_to_line(carry_line, tmp_value);
+				sleep(1);
+				printf("%s", "\nCorrect.\n");
+				if (session_backup) {
+					fprintf(session_pointer, "%s", "\nCorrect.\n");
+				}
+				sleep(1);
+                if (first_operand != 0) {
+                    sprintf(prompt, "We put the %d and carry %d.\n", tmp_total % 10, tmp_total / 10);
+                    printf("%s", prompt);
+                    if (session_backup) {
+                        fprintf(session_pointer, "%s", prompt);
+                    }
+                } else {
+                    sprintf(prompt, "We put the %d, and continue with multiplications corresponding to the following number: %d.\n", tmp_total, (numbers[0] / 10) % 10);
+                    printf("%s", prompt);
+                    if (session_backup) {
+                        fprintf(session_pointer, "%s", prompt);
+                    }
+                }
+                sleep(1);
+                sprintf(prompt, "%s", "Let's continue with the exercise.\n");
+                printf("%s", prompt);
+                if (session_backup) {
+                    fprintf(session_pointer, "%s", prompt);
+                }
+			} else {
+				sleep(1);
+				sprintf(prompt, "%s", "Correct, we have finished with the multiplications.\n");
+				printf("%s", prompt);
+				if (session_pointer) {
+					fprintf(session_pointer, "%s", prompt);
+				}
+            }
+			sleep(1);
+			if (first_operand != 0) {
+				sprintf(prompt, "\n%s%s\n", build_line(carry_line), "<--- Carry");
+				printf("%s", prompt);
+				if (session_backup) {
+					fprintf(session_pointer, "%s", prompt);
+				}
+				char tmp_string[1];
+				sprintf(tmp_string, "%d", tmp_total % 10);
+				prepend_to_line(result_line, tmp_string);
+			} else {
+				char tmp_string[2];
+				sprintf(tmp_string, "%d", tmp_total);
+				prepend_to_line(result_line, tmp_string);
+			}
+			display_multiplication(operands, operands_size, session_pointer, session_backup);
+// *********** OJO LLEGAMOS HASTA LA LINEA 177 EN RUST/multiplication_rust/lib.rs ***********
+		}
+	}
 }
 
 int main(/*FILE *session_pointer, bool session_backup*/) {
