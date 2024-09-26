@@ -115,16 +115,16 @@ void display_sum(char **operands, size_t operands_size, FILE *session_pointer, b
 		}
 		tmp_line = new_line(' ', 15 - strlen(operands[i]), operands[i], 5, ' ');
 	    prompt = build_line(tmp_line);
-		puts(prompt);
+		printf("%s\n", prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 	}
 	tmp_line = new_line(' ', 15 - line_length, repeat('-', line_length), 5, ' ');
 	prompt = build_line(tmp_line);
 	puts(prompt);
 	if (session_backup) {
-		fprintf(session_pointer, "\n%s\n", prompt);
+		fprintf(session_pointer, "%s\n", prompt);
 	}
 	free(prompt); prompt = NULL;
 }
@@ -208,9 +208,9 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 				prepend_to_line(&result_line, tmp_prompt);
 				sleep(1);
 				sprintf(prompt, "\n%s%s", build_line(carry_line), "<--- Carry");
-				puts(prompt);
+				printf("%s\n", prompt);
 				if (session_backup) {
-					fputs(prompt, session_pointer);
+					fprintf(session_pointer, "%s\n", prompt);
 				}
 				display_sum(operands, operands_size, session_pointer, session_backup);
 				sprintf(prompt, "%s", build_line(result_line));
@@ -248,9 +248,9 @@ void sum(char **operands, size_t operands_size, FILE *session_pointer, bool sess
 		prepend_to_line(&result_line, tmp_prompt);
 		sleep(1);
 		sprintf(prompt, "\n%s%s", build_line(carry_line), "<--- Carry");
-		puts(prompt);
+		printf("%s\n", prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 		display_sum(operands, operands_size, session_pointer, session_backup);
 		sprintf(prompt, "%s", build_line(result_line));
