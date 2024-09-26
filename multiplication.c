@@ -5,7 +5,6 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <math.h>
-#include "lib.c"
 
 bool contains_multiplication(char *string, char ch) {
 	size_t i = 0;
@@ -546,10 +545,10 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 	sum_multiplication(sum_operands, result_vector_size, session_pointer, session_backup);
 }
 
-int main(/*FILE *session_pointer, bool session_backup*/) {
-	// OJO ESTAS DOS LINEAS QUE SIGUEN HAY QUE BORRARLAS, TIENEN QUE SER ARGUMENTOS
+int main_multiplication(FILE *session_pointer, bool session_backup) {
+/*	// OJO ESTAS DOS LINEAS QUE SIGUEN HAY QUE BORRARLAS, TIENEN QUE SER ARGUMENTOS
 	FILE *session_pointer = fopen("prueba.txt", "w");
-	bool session_backup = true;
+	bool session_backup = true;*/
 
 
 	char **operands;

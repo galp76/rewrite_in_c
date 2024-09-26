@@ -455,7 +455,7 @@ void subtraction(char **operands, size_t operands_size, size_t original_length, 
 		sprintf(prompt, "\nNow let's continue with the subtraction:\n");
 		printf("%s", prompt);
 		if (session_backup) {
-			fprintf(session_pointer, "%S", prompt);
+			fprintf(session_pointer, "%s", prompt);
 		}
 	}
 	sleep(1);

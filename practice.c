@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include "sum.c"
 #include "subtraction.c"
+#include "multiplication.c"
 
 void practice(FILE *session_pointer, bool session_backup) {
 	size_t options_size = 0;
@@ -30,6 +31,9 @@ void practice(FILE *session_pointer, bool session_backup) {
 					break;
 				case 2:
 					main_subtraction(session_pointer, session_backup);
+					break;
+				case 3:
+					main_multiplication(session_pointer, session_backup);
 					break;
 			}
 		} else {
