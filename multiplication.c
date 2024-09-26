@@ -238,7 +238,7 @@ void display_sum_multiplication(char **operands, size_t operands_size, FILE *ses
 	prompt = build_line(tmp_line);
 	puts(prompt);
 	if (session_backup) {
-		fprintf(session_pointer, "\n%s\n", prompt);
+		fprintf(session_pointer, "%s\n", prompt);
 	}
 	free(prompt); prompt = NULL;
 }
@@ -252,7 +252,7 @@ void sum_multiplication(char **operands, size_t operands_size, FILE *session_poi
 	Line result_line = new_line(' ', 15, "", 5, ' ');
 	Line carry_line = new_line(' ', 14, "", 5, ' ');
 	char prompt[200];
-	sprintf(prompt, "\nLet's do the following exercise:\n");
+	sprintf(prompt, "\nLet's do the following sum:\n");
 	puts(prompt);
 	if (session_backup) {
 		fputs(prompt, session_pointer);
@@ -322,9 +322,9 @@ void sum_multiplication(char **operands, size_t operands_size, FILE *session_poi
 				prepend_to_line(&result_line, tmp_prompt);
 				sleep(1);
 				sprintf(prompt, "\n%s%s", build_line(carry_line), "<--- Carry");
-				puts(prompt);
+				printf("%s\n", prompt);
 				if (session_backup) {
-					fputs(prompt, session_pointer);
+					fprintf(session_pointer, "%s\n", prompt);
 				}
 				display_sum_multiplication(operands, operands_size, session_pointer, session_backup);
 				sprintf(prompt, "%s", build_line(result_line));
@@ -362,9 +362,9 @@ void sum_multiplication(char **operands, size_t operands_size, FILE *session_poi
 		prepend_to_line(&result_line, tmp_prompt);
 		sleep(1);
 		sprintf(prompt, "\n%s%s", build_line(carry_line), "<--- Carry");
-		puts(prompt);
+		printf("%s\n", prompt);
 		if (session_backup) {
-			fputs(prompt, session_pointer);
+			fprintf(session_pointer, "%s\n", prompt);
 		}
 		display_sum_multiplication(operands, operands_size, session_pointer, session_backup);
 		sprintf(prompt, "%s", build_line(result_line));
