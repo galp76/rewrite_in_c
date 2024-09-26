@@ -546,11 +546,6 @@ void multiplication(char **operands, size_t operands_size, FILE *session_pointer
 }
 
 int main_multiplication(FILE *session_pointer, bool session_backup) {
-/*	// OJO ESTAS DOS LINEAS QUE SIGUEN HAY QUE BORRARLAS, TIENEN QUE SER ARGUMENTOS
-	FILE *session_pointer = fopen("prueba.txt", "w");
-	bool session_backup = true;*/
-
-
 	char **operands;
 	size_t operands_size = 0;
 	sleep(1);

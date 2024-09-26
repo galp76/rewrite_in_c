@@ -287,4 +287,12 @@ void prepend_to_line(Line *line, char *new_content) {
 	line->left_pad -= strlen(new_content);
 }
 
+void replace_in_line(Line *line, char *new) {
+	size_t old_len = strlen(line->content);
+	char *tmp_string = (char*) calloc(50, 1);
+	tmp_string = repeat(' ', old_len - strlen(new));
+	strcat(tmp_string, new);
+	line->content = tmp_string;
+}
+
 // *************** HERE FINISHES THE DECLARATIONS OF THE STRUCT LINE ************************
