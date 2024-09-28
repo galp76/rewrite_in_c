@@ -275,8 +275,11 @@ char *build_line(Line line) {
 }
 
 void append_to_line(Line *line, char *new_content) {
-	strcat(line->content, new_content);
-	line->left_pad -= strlen(new_content);
+	char *tmp_string = (char*) calloc(100, 1);
+	strcpy(tmp_string, line->content);
+	strcat(tmp_string, new_content);
+	line->content = tmp_string;
+	line->right_pad -= strlen(new_content);
 }
 
 void prepend_to_line(Line *line, char *new_content) {

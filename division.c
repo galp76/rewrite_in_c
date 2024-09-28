@@ -190,13 +190,13 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 		dividend_vector[k] = operands[0][k];
 	}
 	// number: the partial dividend to be used in each iteration
-	char pre_number[1];
+	char pre_number[2];
     sprintf(pre_number, "%c", dividend_vector[0]);
 	int number = atoi(pre_number);
 	int divisor = atoi(operands[1]);
 	while (number / divisor < 1) {
 		i += 1;
-		char tmp_string[1];
+		char tmp_string[2];
 		sprintf(tmp_string, "%c", dividend_vector[i]);
 		number = number * 10 + atoi(tmp_string);
 	}
@@ -236,6 +236,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				} else {
 					break;
 				}
+				k++;
 			}
 		} else {
 			int tmp_number = number;
@@ -244,7 +245,83 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				tmp_number /= 10;
 			}
 		}
-
+		sprintf(prompt, "\nWe need a number that, multiplied by %d, is equal to or as close as possible to %d. What is that number?", divisor, number);
+		equal_or_not_division(tmp_quotient, prompt, session_pointer, session_backup);
+		sprintf(pre_number, "%d", tmp_quotient); // pre_number -> defined in line 193 as char[1]
+		append_to_line(&exercise.quotient, pre_number);
+		sleep(1);
+		sprintf(prompt, "%s", "\nCorrect.\n");
+		printf("%s", prompt);
+		if (session_backup) {
+			fprintf(session_pointer, "%s", prompt);
+		}
+		sleep(1);
+		sprintf(prompt, "%s", "\nAnd how much residue do we have left?\n");
+		equal_or_not_division(number % divisor, prompt, session_pointer, session_backup);
+		sleep(1);
+		sprintf(prompt, "%s", "\nCorrect.\n");
+		printf("%s", prompt);
+		if (session_backup) {
+			fprintf(session_pointer, "%s", prompt);
+		}
+		sleep(1);
+		i++;
+		number = number % divisor;
+		// if tmp_quotient == 0 the residue will be equal to tmp_dividend, and spaces doesn't have to be modified
+		if (tmp_quotient != 0) {
+			int tmp_number = number;
+			while (tmp_number != 0) {
+				spaces -= 1;
+				tmp_number /= 10;
+			}
+		}
+		if (i == strlen(operands[0])) {
+			sprintf(prompt, "%s", "\nWe have finished the exercise.\n");
+			printf("%s", prompt);
+			if (session_backup) {
+				fprintf(session_pointer, "%s", prompt);
+			}
+			char string_number[10];
+			sprintf(string_number, "%d", number);
+			Line residue = new_line(' ', 5 + spaces, string_number, 0, ' ');
+			exercise.operations_counter++;
+			exercise.operations[exercise.operations_counter] = residue;
+			sleep(1);
+			display_division(exercise, session_pointer, session_backup);
+			exit(0);
+		}
+		bool zero_residue = number == 0 ? true : false;
+		if (first_iteration) {
+			char string_number[10];
+			sprintf(string_number, "%d", number);
+			replace_in_line(&exercise.operations[0], string_number);
+			sprintf(pre_number, "%c", dividend_vector[i]); // pre_number -> defined in line 193 as char[1]
+			append_to_line(&exercise.operations[0], pre_number);
+			first_iteration = false;
+			number = number * 10 + atoi(pre_number);
+		} else {
+			Line tmp;
+			if (zero_residue) {
+				tmp = new_line(' ', 5 + spaces, "0", 10, ' ');
+				sprintf(pre_number, "%c", dividend_vector[i]); // pre_number -> defined in line 193 as char[1]
+				append_to_line(&tmp, pre_number);
+				number = atoi(pre_number);
+			} else {
+				number = number * 10 + atoi(pre_number);
+				char string_number[10];
+				sprintf(string_number, "%d", number);
+				tmp = new_line(' ', 5 + spaces, string_number, 10, ' ');
+			}
+			exercise.operations_counter++;
+			exercise.operations[exercise.operations_counter] = tmp;
+		}
+		sprintf(prompt, "\nWe now take the %c from the dividend and continue.\n", dividend_vector[i]);
+		printf("%s", prompt);
+		if (session_backup) {
+			fprintf(session_pointer, "%s", prompt);
+		}
+		sleep(1);
+		display_division(exercise, session_pointer, session_backup);
 	}
 }
 
