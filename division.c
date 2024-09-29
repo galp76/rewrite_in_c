@@ -50,7 +50,6 @@ void display_division(Division division, FILE *session_pointer, bool session_bac
 	}
 	if (division.operations_counter > 1) {
 		for (size_t j = 1; j < division.operations_counter; j++) {
-//			printf("j = %d\nexercise.operations[%d].content = %s\n", j, j, division.operations[j].content);
 			sprintf(prompt, "%s\n", build_line(division.operations[j]));
 			printf("%s", prompt);
 			if (session_backup) {
@@ -154,35 +153,7 @@ void equal_or_not_division(int tmp_total, const char *prompt, FILE *session_poin
 		}
 	}
 }
-/*
-void display_division(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
-	size_t line_length = strlen(operands[0]);
-	Line tmp_line = new_line(' ', 15 - strlen(operands[0]), operands[0], 3, '*');
-	char *prompt = build_line(tmp_line);
-	printf("\n%s\n", prompt);
-	if (session_backup) {
-		fprintf(session_pointer, "\n%s\n", prompt);
-	}
-	for (size_t i = 1; i < operands_size; i++) {
-		if (strlen(operands[i]) > line_length) {
-			line_length = strlen(operands[i]);
-		}
-		tmp_line = new_line(' ', 15 - strlen(operands[i]), operands[i], 5, ' ');
-	    prompt = build_line(tmp_line);
-		printf("%s\n", prompt);
-		if (session_backup) {
-			fprintf(session_pointer, "%s\n", prompt);
-		}
-	}
-	tmp_line = new_line(' ', 15 - line_length, repeat('-', line_length), 5, ' ');
-	prompt = build_line(tmp_line);
-	printf("%s\n", prompt);
-	if (session_backup) {
-		fprintf(session_pointer, "%s\n", prompt);
-	}
-	free(prompt); prompt = NULL;
-}
-*/
+
 void division(char **operands, size_t operands_size, FILE *session_pointer, bool session_backup) {
 	char dividend_vector[strlen(operands[0])];
 	// i: to control the number that is used in each iteration
@@ -212,7 +183,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 	sleep(1);
 	display_division(exercise, session_pointer, session_backup);
 	sleep(1);
-	sprintf(prompt, "\nTo begin with the exercise, we need a number greater than or equal to  %d.\n", divisor);
+	sprintf(prompt, "\nTo begin with the exercise, we need a number greater than or equal to %d.\n", divisor);
 	printf("%s", prompt);
 	if (session_backup) {
 		fprintf(session_pointer, "%s", prompt);
@@ -245,7 +216,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				tmp_number /= 10;
 			}
 		}*/
-		printf("spaces: %d\n", spaces);
+//		printf("spaces: %d\n", spaces);
 		sprintf(prompt, "\nWe need a number that, multiplied by %d, is equal to or as close as possible to %d. What is that number?", divisor, number);
 		equal_or_not_division(tmp_quotient, prompt, session_pointer, session_backup);
 		sprintf(pre_number, "%d", tmp_quotient); // pre_number -> defined in line 193 as char[1]
@@ -257,7 +228,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 			fprintf(session_pointer, "%s", prompt);
 		}
 		sleep(1);
-		sprintf(prompt, "%s", "\nAnd how much residue do we have left?\n");
+		sprintf(prompt, "%s", "\nAnd how much residue do we have left?");
 		equal_or_not_division(number % divisor, prompt, session_pointer, session_backup);
 		sleep(1);
 		sprintf(prompt, "%s", "\nCorrect.\n");
@@ -279,7 +250,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				tmp_number /= 10;
 			}
 		}*/
-		printf("spaces: %d\n", spaces);
+//		printf("spaces: %d\n", spaces);
 		if (i == strlen(operands[0])) {
 			sprintf(prompt, "%s", "\nWe have finished the exercise.\n");
 			printf("%s", prompt);
@@ -316,13 +287,10 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				number = number * 10 + atoi(pre_number);
 				char *string_number = (char*) calloc(10, 1);
 				sprintf(string_number, "%d", number);
-//				printf("string_number = %s\n", string_number);
 				tmp = new_line(' ', 5 + spaces, string_number, 0, ' ');
-//				printf("tmp.content = %s\n", tmp.content);
 			}
 			exercise.operations[exercise.operations_counter] = tmp;
 			exercise.operations_counter++;
-//			printf("exercise.operations[exercise.operations_counter].content = %s\n", exercise.operations[exercise.operations_counter].content);
 		}
 		sprintf(prompt, "\nWe now take the %c from the dividend and continue.\n", dividend_vector[i]);
 		printf("%s", prompt);
@@ -331,7 +299,6 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 		}
 		sleep(1);
 		display_division(exercise, session_pointer, session_backup);
-//		puts("Reach end of loop.");
 	}
 }
 

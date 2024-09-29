@@ -261,26 +261,15 @@ char *repeat(char ch, size_t number) {
 }
 
 char *build_line(Line line) {
-//	puts("Inside build_line...");
-//	printf("line.content = %s\n", line.content);
 	size_t content_size = strlen(line.content);
-//	puts("content_size calculado.");
 	size_t total_len = 1 + line.left_pad + content_size + line.right_pad + 2;
-//	puts("total_len calculado.");
 	char *result = (char*) calloc(total_len, 1);
-//	puts("calloc ejecutado");
 	result[0] = line.left_sep;
-//	puts("Paso 1.");
 	strcat(result, repeat(' ', line.left_pad));
-//	puts("Paso 2.");
 	strcat(result, line.content);
-//	puts("Paso 3.");
 	strcat(result, repeat(' ', line.right_pad));
-//	puts("Paso 4.");
 	strcat(result, &line.right_sep);
-//	puts("Paso 5.");
 	result[total_len - 1] = '\0';
-//	puts("Paso 6.");
 
 	return result;
 }
@@ -301,6 +290,7 @@ void prepend_to_line(Line *line, char *new_content) {
 	line->left_pad -= strlen(new_content);
 }
 
+// replace_in_line -> this function is used only in division.c
 void replace_in_line(Line *line, char *new) {
 	size_t old_len = strlen(line->content);
 	char *tmp_string = (char*) calloc(50, 1);
