@@ -4,7 +4,6 @@
 #include <stddef.h>
 #include <stdbool.h>
 #include <unistd.h>
-#include "lib.c"
 
 // here starts the definitions of the Division struct
 typedef struct {
@@ -302,11 +301,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 	}
 }
 
-int main(/*FILE *session_pointer, bool session_backup*/) {
-	// OJO ESTAS DOS LINEAS QUE SIGUEN HAY QUE BORRARLAS, DEBEN SER ARGUMENTOS
-	FILE *session_pointer = fopen("prueba.txt", "w");
-	bool session_backup = true;
-
+int main_division(FILE *session_pointer, bool session_backup) {
 	char **operands;
 	size_t operands_size = 0;
 	sleep(1);
