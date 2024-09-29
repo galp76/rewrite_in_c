@@ -225,7 +225,7 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 		// tmp_quotient: the partial quotient in each iteration
 		int tmp_quotient = number / divisor;
 		// if tmp_quotient == 0 the residue will be equal to tmp_dividend, and we don't have to modify spaces
-		if (tmp_quotient == 0) {
+/*		if (tmp_quotient == 0) {
 			char actual_dividend[20];
 		    sprintf(actual_dividend, "%s", exercise.operations[exercise.operations_counter - 1].content);
 //			printf("actual_dividend: %s\nlength actual_dividend: %d\n", actual_dividend, strlen(actual_dividend));
@@ -237,7 +237,6 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				} else {
 					break;
 				}
-				k++;
 			}
 		} else {
 			int tmp_number = number;
@@ -245,7 +244,8 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 				spaces += 1;
 				tmp_number /= 10;
 			}
-		}
+		}*/
+		printf("spaces: %d\n", spaces);
 		sprintf(prompt, "\nWe need a number that, multiplied by %d, is equal to or as close as possible to %d. What is that number?", divisor, number);
 		equal_or_not_division(tmp_quotient, prompt, session_pointer, session_backup);
 		sprintf(pre_number, "%d", tmp_quotient); // pre_number -> defined in line 193 as char[1]
@@ -268,14 +268,18 @@ void division(char **operands, size_t operands_size, FILE *session_pointer, bool
 		sleep(1);
 		i++;
 		number = number % divisor;
+		char tmp_number[10];
+		sprintf(tmp_number, "%d", number);
+		spaces = i - strlen(tmp_number);
 		// if tmp_quotient == 0 the residue will be equal to tmp_dividend, and spaces doesn't have to be modified
-		if (tmp_quotient != 0) {
+/*		if (tmp_quotient != 0) {
 			int tmp_number = number;
 			while (tmp_number != 0) {
 				spaces -= 1;
 				tmp_number /= 10;
 			}
-		}
+		}*/
+		printf("spaces: %d\n", spaces);
 		if (i == strlen(operands[0])) {
 			sprintf(prompt, "%s", "\nWe have finished the exercise.\n");
 			printf("%s", prompt);
